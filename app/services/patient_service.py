@@ -91,21 +91,43 @@ def patch_patient(id, data):
         if not patient:
             return jsonify({"message": "Patient not found"}), 404
 
+        updated_fields = []
+
         # Actualización parcial: Solo modifica los campos proporcionados
-        patient.first_name = data.get("first_name", patient.first_name)
-        patient.last_name = data.get("last_name", patient.last_name)
-        patient.phone = data.get("phone", patient.phone)
-        patient.email = data.get("email", patient.email)
-        patient.dni = data.get("dni", patient.dni)
+        if "first_name" in data:
+            patient.first_name = data["first_name"]
+            updated_fields.append("First Name")
+
+        if "last_name" in data:
+            patient.last_name = data["last_name"]
+            updated_fields.append("Last Name")
+
+        if "phone" in data:
+            patient.phone = data["phone"]
+            updated_fields.append("Phone")
+
+        if "email" in data:
+            patient.email = data["email"]
+            updated_fields.append("Email")
+
+        if "dni" in data:
+            patient.dni = data["dni"]
+            updated_fields.append("DNI")
+
         if "password" in data:
             patient.set_password(data["password"])
+            updated_fields.append("Password")
 
         db.session.commit()
+
+        message = "Patient updated successfully"
+        if updated_fields:
+            message += f". Fields updated: {', '.join(updated_fields)}"
 
         return (
             jsonify(
                 {
-                    "message": "Patient updated successfully",
+                    "message": message,
                     "patient": {
                         "id": patient.id,
                         "first_name": patient.first_name,
