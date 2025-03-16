@@ -2,8 +2,7 @@ from flask import Flask
 from app.extensions import db, migrate
 from app.models import * 
 from celery import Celery
-from app.routes.main_routes import routes
-from app.routes.patient_routes import patient_bp
+from app.routes.user_routes import user_bp
 from flask_jwt_extended import JWTManager
 
 
@@ -27,8 +26,7 @@ def create_app():
     migrate.init_app(app, db)
     jwt.init_app(app)
 
-    app.register_blueprint(routes)
-    app.register_blueprint(patient_bp)
+    app.register_blueprint(user_bp)
 
     celery = make_celery(app)
 
