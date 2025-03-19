@@ -15,7 +15,9 @@ class Patient(db.Model):
     date_of_birth = db.Column(db.Date, nullable=True)
     last_login = db.Column(db.DateTime(timezone=True), nullable=True)
     created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, unique=True)
 
+    user = db.relationship("User", back_populates="patient", uselist=False)
     appointments = db.relationship("Appointment", backref="patient", lazy=True)
 
     def __repr__(self):

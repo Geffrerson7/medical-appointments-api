@@ -1,16 +1,15 @@
 from app.extensions import db
-from sqlalchemy import ForeignKey
 
 
 class Doctor(db.Model):
     __tablename__ = "doctors"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, ForeignKey("users.id"), nullable=False)
     specialty = db.Column(db.String(100), nullable=False)
     identification_code = db.Column(db.String(50), unique=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, unique=True)
 
-    user = db.relationship("User", back_populates="doctor")
+    user = db.relationship("User", back_populates="doctor", uselist=False)
     appointments = db.relationship("Appointment", backref="doctor", lazy=True)
     schedules = db.relationship("Schedule", backref="doctor", lazy=True)
     doctor_rooms = db.relationship("DoctorRoom", back_populates="doctor")
