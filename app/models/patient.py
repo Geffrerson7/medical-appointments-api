@@ -30,3 +30,4 @@ class Patient(db.Model):
     def check_password(self, password):
         """Verifica que el password ingresado sea correcto"""
         return check_password_hash(self.password, password)
+
