@@ -7,6 +7,7 @@ from app.services.user_service import (
     put_user,
     refresh_access_token,
     get_user_by_id,
+    soft_delete_user_by_id,
 )
 from flask_jwt_extended import jwt_required
 
@@ -55,3 +56,9 @@ def refresh():
     data = request.get_json()
     refresh_token = data.get("refresh")
     return refresh_access_token(refresh_token)
+
+
+@user_bp.route("/<int:user_id>/delete", methods=["PATCH"])
+@jwt_required()
+def soft_delete_user(user_id):
+    return soft_delete_user_by_id(user_id)
