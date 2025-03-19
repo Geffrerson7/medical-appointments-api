@@ -310,3 +310,14 @@ def refresh_access_token(refresh_token):
             ),
             500,
         )
+
+
+def soft_delete_user_by_id(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    user.is_active = False
+    db.session.commit()
+
+    return jsonify({"message": "User soft deleted successfully"}), 200
