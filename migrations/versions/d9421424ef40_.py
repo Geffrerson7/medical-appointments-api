@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 2ff57b692cc9
+Revision ID: d9421424ef40
 Revises: 
-Create Date: 2025-03-16 18:13:00.571657
+Create Date: 2025-03-18 20:18:28.982820
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '2ff57b692cc9'
+revision = 'd9421424ef40'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -42,21 +42,31 @@ def upgrade():
     )
     op.create_table('doctors',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('specialty', sa.String(length=100), nullable=False),
     sa.Column('identification_code', sa.String(length=50), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('identification_code')
+    sa.UniqueConstraint('identification_code'),
+    sa.UniqueConstraint('user_id')
     )
     op.create_table('patients',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('first_name', sa.String(length=100), nullable=False),
+    sa.Column('last_name', sa.String(length=100), nullable=False),
     sa.Column('dni', sa.String(length=20), nullable=False),
+    sa.Column('password', sa.String(length=200), nullable=False),
+    sa.Column('email', sa.String(length=120), nullable=False),
     sa.Column('phone', sa.String(length=20), nullable=True),
+    sa.Column('date_of_birth', sa.Date(), nullable=True),
+    sa.Column('last_login', sa.DateTime(timezone=True), nullable=True),
+    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('dni')
+    sa.UniqueConstraint('dni'),
+    sa.UniqueConstraint('email'),
+    sa.UniqueConstraint('user_id')
     )
     op.create_table('appointments',
     sa.Column('id', sa.Integer(), nullable=False),
