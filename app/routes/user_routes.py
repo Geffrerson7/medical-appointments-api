@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from app.services.user_service import (
     create_user,
     get_users,
@@ -6,6 +6,7 @@ from app.services.user_service import (
     patch_user,
     put_user,
     refresh_access_token,
+    get_user_by_id,
 )
 from flask_jwt_extended import jwt_required
 
@@ -29,6 +30,12 @@ def login():
     return login_user(data)
 
 
+@user_bp.route("/<int:user_id>", methods=["GET"])
+@jwt_required()
+def get_user(user_id):
+    return get_user_by_id(user_id)
+
+
 @user_bp.route("/<int:id>", methods=["PATCH"])
 @jwt_required()
 def patch(id):
@@ -43,7 +50,7 @@ def put(id):
     return put_user(id, data)
 
 
-@user_bp.route('/token-refresh', methods=['POST'])
+@user_bp.route("/token-refresh", methods=["POST"])
 def refresh():
     data = request.get_json()
     refresh_token = data.get("refresh")
