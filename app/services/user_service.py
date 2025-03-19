@@ -9,6 +9,7 @@ from flask_jwt_extended import (
 from datetime import datetime
 import traceback
 
+
 def get_users():
     try:
         users = User.query.all()
@@ -33,6 +34,33 @@ def get_users():
         return jsonify(users_list), 200
     except Exception as e:
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
+
+
+def get_user_by_id(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    return (
+        jsonify(
+            {
+                "id": user.id,
+                "first_name": user.first_name,
+                "last_name": user.last_name,
+                "email": user.email,
+                "username": user.username,
+                "date_of_birth": (
+                    user.date_of_birth.strftime("%Y-%m-%d")
+                    if user.date_of_birth
+                    else None
+                ),
+                "role": user.role,
+                "is_active": user.is_active,
+                "date_joined": user.date_joined.strftime("%Y-%m-%d %H:%M:%S"),
+            }
+        ),
+        200,
+    )
 
 
 def create_user(data):
@@ -262,16 +290,23 @@ def refresh_access_token(refresh_token):
 
         new_access_token = create_access_token(identity=identity)
         decoded_access = decode_token(new_access_token)
-        access_expiration = datetime.fromtimestamp(decoded_access['exp'])
+        access_expiration = datetime.fromtimestamp(decoded_access["exp"])
 
-        return jsonify({
-            "access_token": new_access_token,
-            "access_token_expiration": access_expiration.isoformat()
-        }), 200
+        return (
+            jsonify(
+                {
+                    "access_token": new_access_token,
+                    "access_token_expiration": access_expiration.isoformat(),
+                }
+            ),
+            200,
+        )
 
     except Exception as e:
         traceback_str = traceback.format_exc()
-        return jsonify({
-            "msg": f"Internal Server Error: {str(e)}",
-            "traceback": traceback_str
-        }), 500
+        return (
+            jsonify(
+                {"msg": f"Internal Server Error: {str(e)}", "traceback": traceback_str}
+            ),
+            500,
+        )
