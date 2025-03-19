@@ -7,7 +7,7 @@ from flask_jwt_extended import (
     decode_token,
 )
 from datetime import datetime
-
+import traceback
 
 def get_users():
     try:
@@ -246,3 +246,32 @@ def put_user(id, data):
             ),
             500,
         )
+
+
+def refresh_access_token(refresh_token):
+    if not refresh_token:
+        return jsonify({"msg": "Missing refresh token"}), 400
+
+    try:
+        decoded = decode_token(refresh_token)
+        identity = decoded.get("sub")
+        exp_timestamp = decoded.get("exp")
+
+        if datetime.now() > datetime.fromtimestamp(exp_timestamp):
+            return jsonify({"msg": "Refresh token expired"}), 401
+
+        new_access_token = create_access_token(identity=identity)
+        decoded_access = decode_token(new_access_token)
+        access_expiration = datetime.fromtimestamp(decoded_access['exp'])
+
+        return jsonify({
+            "access_token": new_access_token,
+            "access_token_expiration": access_expiration.isoformat()
+        }), 200
+
+    except Exception as e:
+        traceback_str = traceback.format_exc()
+        return jsonify({
+            "msg": f"Internal Server Error: {str(e)}",
+            "traceback": traceback_str
+        }), 500

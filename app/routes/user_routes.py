@@ -5,6 +5,7 @@ from app.services.user_service import (
     login_user,
     patch_user,
     put_user,
+    refresh_access_token,
 )
 from flask_jwt_extended import jwt_required
 
@@ -41,3 +42,9 @@ def put(id):
     data = request.get_json()
     return put_user(id, data)
 
+
+@user_bp.route('/token-refresh', methods=['POST'])
+def refresh():
+    data = request.get_json()
+    refresh_token = data.get("refresh")
+    return refresh_access_token(refresh_token)
