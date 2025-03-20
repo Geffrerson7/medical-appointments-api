@@ -28,6 +28,7 @@ def get_users():
                     else None
                 ),
                 "role": user.role,
+                "dni": user.dni,
             }
             for user in users
         ]
@@ -73,6 +74,7 @@ def create_user(data):
             email=data["email"],
             username=data["username"],
             role=data["role"],
+            dni=data["dni"],
         )
         new_user.set_password(data["password"])
         db.session.add(new_user)
@@ -152,6 +154,26 @@ def patch_user(id, data):
             user.username = data["username"]
             updated_fields.append("Username")
 
+        if "dni" in data:
+            user.dni = data["dni"]
+            updated_fields.append("dni")
+
+        if "address" in data:
+            user.address = data["address"]
+            updated_fields.append("address")
+
+        if "city" in data:
+            user.city = data["city"]
+            updated_fields.append("city")
+
+        if "country" in data:
+            user.country = data["country"]
+            updated_fields.append("country")
+
+        if "phone" in data:
+            user.phone = data["phone"]
+            updated_fields.append("phone")
+
         db.session.commit()
 
         message = "User updated successfully"
@@ -203,6 +225,11 @@ def put_user(id, data):
             "role",
             "password",
             "date_of_birth",
+            "dni",
+            "phone",
+            "address",
+            "city",
+            "country",
         ]
         missing_fields = [field for field in required_fields if field not in data]
 
@@ -222,6 +249,11 @@ def put_user(id, data):
         user.last_name = data["last_name"]
         user.email = data["email"]
         user.role = data["role"]
+        user.dni = data["dni"]
+        user.phone = data["phone"]
+        user.address = data["address"]
+        user.city = data["city"]
+        user.country = data["country"]
         user.set_password(data["password"])
 
         if data["date_of_birth"]:
@@ -250,6 +282,11 @@ def put_user(id, data):
                         "last_name": user.last_name,
                         "email": user.email,
                         "role": user.role,
+                        "dni": user.dni,
+                        "phone": user.phone,
+                        "address": user.address,
+                        "city": user.city,
+                        "country": user.country,
                         "date_of_birth": (
                             user.date_of_birth.strftime("%Y-%m-%d")
                             if user.date_of_birth
