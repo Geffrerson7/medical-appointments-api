@@ -15,6 +15,6 @@ class Doctor(db.Model):
     doctor_rooms = db.relationship("DoctorRoom", back_populates="doctor")
 
     def __repr__(self):
-        return (
-            f"<Doctor {self.user.first_name} {self.user.last_name} - {self.specialty}>"
-        )
+        first_name = self.user.first_name if self.user else "Unknown"
+        last_name = self.user.last_name if self.user else "Unknown"
+        return f"<Doctor {first_name} {last_name} - {self.specialty}>"
