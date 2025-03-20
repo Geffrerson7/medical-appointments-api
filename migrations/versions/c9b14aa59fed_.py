@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: d9421424ef40
+Revision ID: c9b14aa59fed
 Revises: 
-Create Date: 2025-03-18 20:18:28.982820
+Create Date: 2025-03-19 19:01:56.578153
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd9421424ef40'
+revision = 'c9b14aa59fed'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -30,13 +30,19 @@ def upgrade():
     sa.Column('last_login', sa.DateTime(timezone=True), nullable=True),
     sa.Column('first_name', sa.String(length=150), nullable=False),
     sa.Column('last_name', sa.String(length=150), nullable=False),
+    sa.Column('dni', sa.String(length=20), nullable=False),
     sa.Column('is_active', sa.Boolean(), nullable=False),
-    sa.Column('date_joined', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
     sa.Column('email', sa.String(length=80), nullable=False),
     sa.Column('username', sa.String(length=45), nullable=False),
-    sa.Column('date_of_birth', sa.Date(), nullable=True),
     sa.Column('role', sa.String(length=20), nullable=False),
+    sa.Column('phone', sa.String(length=20), nullable=True),
+    sa.Column('date_joined', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
+    sa.Column('city', sa.String(length=100), nullable=True),
+    sa.Column('country', sa.String(length=100), nullable=True),
+    sa.Column('date_of_birth', sa.Date(), nullable=True),
+    sa.Column('address', sa.String(length=200), nullable=True),
     sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('dni'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
     )
@@ -52,20 +58,9 @@ def upgrade():
     )
     op.create_table('patients',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('first_name', sa.String(length=100), nullable=False),
-    sa.Column('last_name', sa.String(length=100), nullable=False),
-    sa.Column('dni', sa.String(length=20), nullable=False),
-    sa.Column('password', sa.String(length=200), nullable=False),
-    sa.Column('email', sa.String(length=120), nullable=False),
-    sa.Column('phone', sa.String(length=20), nullable=True),
-    sa.Column('date_of_birth', sa.Date(), nullable=True),
-    sa.Column('last_login', sa.DateTime(timezone=True), nullable=True),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('dni'),
-    sa.UniqueConstraint('email'),
     sa.UniqueConstraint('user_id')
     )
     op.create_table('appointments',
