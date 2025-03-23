@@ -63,3 +63,34 @@ def get_patients():
         return jsonify(patients_list), 200
     except Exception as e:
         return jsonify({"message": "An error occurred", "error": str(e)}), 500
+
+
+def get_patient_by_id(id):
+    try:
+        patient = Patient.query.get(id)
+        if not patient:
+            return jsonify({"message": "Patient not found"}), 404
+
+        user = patient.user
+        return (
+            jsonify(
+                {
+                    "id": patient.id,
+                    "user_id": user.id,
+                    "first_name": user.first_name,
+                    "last_name": user.last_name,
+                    "email": user.email,
+                    "dni": user.dni,
+                    "phone": user.phone,
+                    "city": user.city,
+                    "country": user.country,
+                    "date_of_birth": (
+                        user.date_of_birth.isoformat() if user.date_of_birth else None
+                    ),
+                    "address": user.address,
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        return jsonify({"message": "An error occurred", "error": str(e)}), 500
